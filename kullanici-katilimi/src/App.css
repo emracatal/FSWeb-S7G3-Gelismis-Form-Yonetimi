@@ -6,6 +6,11 @@
   height: 40vmin;
   pointer-events: none;
 }
+Form {
+  padding: 2rem 2rem;
+  border: thick double rgb(34, 209, 34);
+  border-radius: 1rem;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
