@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import { Button, Form, Label, Input, FormFeedback } from "reactstrap";
+import axios from "axios";
 
 const initialData = {
   name: "",
@@ -33,9 +34,18 @@ const LoginForm = () => {
     terms: Yup.boolean().oneOf([true], "Please accept Terms and Conditions"),
   });
 
+  const [kullanicilar, setKullanicilar] = useState([]);
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Submit Edildi! ", formState);
+    axios
+      .post("https://reqres.in/api/users", formState)
+      .then(function (response) {
+        console.log("Form Submit Edildi! ", response.data);
+        setKullanicilar([...kullanicilar, response.data]);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   const inputChange = (e) => {
@@ -72,75 +82,86 @@ const LoginForm = () => {
   }, [formErrors]);
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Label htmlFor="name">
-        Name
-        <Input
-          id="name"
-          type="text"
-          name="name"
-          placeholder="Name"
-          onChange={inputChange}
-          invalid={!!formErrors.name}
-        />
-        <FormFeedback>{formErrors.name}</FormFeedback>
-      </Label>
-      <br />
-      <Label htmlFor="surname">
-        Surname
-        <Input
-          id="surname"
-          type="text"
-          name="surname"
-          placeholder="Surname"
-          onChange={inputChange}
-          invalid={!!formErrors.surname}
-        />
-        <FormFeedback>{formErrors.surname}</FormFeedback>
-      </Label>
-      <br />
-      <Label htmlFor="user-mail">
-        Email
-        <Input
-          id="user-mail"
-          type="email"
-          name="email"
-          placeholder="Email adress"
-          onChange={inputChange}
-          invalid={!!formErrors.email}
-        />
-        <FormFeedback>{formErrors.email}</FormFeedback>
-      </Label>
-      <br />
-      <Label htmlFor="user-pass">
-        Password
-        <Input
-          id="user-pass"
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={inputChange}
-          invalid={!!formErrors.password}
-        />
-        <FormFeedback>{formErrors.password}</FormFeedback>
-      </Label>
-      <br />
-      <Label htmlFor="checkbox">
-        Terms
-        <Input
-          onChange={inputChange}
-          type="checkbox"
-          id="checkbox"
-          name="terms"
-          invalid={!!formErrors.terms}
-        />
-        <FormFeedback>{formErrors.terms}</FormFeedback>
-      </Label>
-      <br />
-      <Button type="submit" disabled={!isFormValid}>
-        Login
-      </Button>
-    </Form>
+    <>
+      <Form onSubmit={handleSubmit}>
+        <Label htmlFor="name">
+          Name
+          <Input
+            id="name"
+            type="text"
+            name="name"
+            placeholder="Name"
+            onChange={inputChange}
+            invalid={!!formErrors.name}
+          />
+          <FormFeedback>{formErrors.name}</FormFeedback>
+        </Label>
+        <br />
+        <Label htmlFor="surname">
+          Surname
+          <Input
+            id="surname"
+            type="text"
+            name="surname"
+            placeholder="Surname"
+            onChange={inputChange}
+            invalid={!!formErrors.surname}
+          />
+          <FormFeedback>{formErrors.surname}</FormFeedback>
+        </Label>
+        <br />
+        <Label htmlFor="user-mail">
+          Email
+          <Input
+            id="user-mail"
+            type="email"
+            name="email"
+            placeholder="Email adress"
+            onChange={inputChange}
+            invalid={!!formErrors.email}
+          />
+          <FormFeedback>{formErrors.email}</FormFeedback>
+        </Label>
+        <br />
+        <Label htmlFor="user-pass">
+          Password
+          <Input
+            id="user-pass"
+            type="password"
+            name="password"
+            placeholder="Password"
+            onChange={inputChange}
+            invalid={!!formErrors.password}
+          />
+          <FormFeedback>{formErrors.password}</FormFeedback>
+        </Label>
+        <br />
+        <Label htmlFor="checkbox">
+          Terms
+          <Input
+            onChange={inputChange}
+            type="checkbox"
+            id="checkbox"
+            name="terms"
+            invalid={!!formErrors.terms}
+          />
+          <FormFeedback>{formErrors.terms}</FormFeedback>
+        </Label>
+        <br />
+        <Button type="submit" disabled={!isFormValid}>
+          Login
+        </Button>
+      </Form>
+      <div>
+        {kullanicilar.map((k, i) => {
+          return (
+            <div key={i}>
+              {k.name} - {k.surname} - {k.email}
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 };
 
