@@ -2,17 +2,15 @@ import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import { Button, Form, Label, Input, FormFeedback } from "reactstrap";
 
+const initialData = {
+  name: "",
+  surname: "",
+  email: "",
+  password: "",
+  terms: false,
+};
 const LoginForm = () => {
-  // State for the form values
-  const [formState, setFormState] = useState({
-    name: "",
-    surname: "",
-    email: "",
-    password: "",
-    terms: false,
-  });
-
-  // State for the error messages
+  const [formState, setFormState] = useState({ initialData });
   const [formErrors, setFormErrors] = useState({
     name: "",
     surname: "",
@@ -22,25 +20,6 @@ const LoginForm = () => {
   });
 
   const [isFormValid, setFormValid] = useState(false);
-  useEffect(() => {
-    formSchema.isValid(formState).then((valid) => setFormValid(valid));
-  }, [formState]);
-
-  useEffect(() => {
-    console.log("[Form validation error state updated]", formErrors);
-  }, [formErrors]);
-
-  const inputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    Yup.reach(formSchema, name)
-      .validate(type === "checkbox" ? checked : value)
-      .then((valid) => {
-        setFormErrors({ ...formErrors, [name]: "" });
-      })
-      .catch((err) => {
-        setFormErrors({ ...formErrors, [name]: err.errors[0] });
-      });
-  };
 
   const formSchema = Yup.object().shape({
     name: Yup.string().required("Please enter your name"),
@@ -52,11 +31,48 @@ const LoginForm = () => {
       .required("Password is Required")
       .min(6, "Passwords must be at least 6 characters long."),
     terms: Yup.boolean().oneOf([true], "Please accept Terms and Conditions"),
-    // required isn't required for checkboxes.
   });
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Submit Edildi! ", formState);
+  };
+
+  const inputChange = (e) => {
+    const { type, name, value, checked } = e.target;
+    const inputValue = type === "checkbox" ? checked : value;
+
+    setFormState({
+      ...formState,
+      [name]: inputValue,
+    });
+
+    validateFormField(e);
+  };
+
+  const validateFormField = (e) => {
+    const { type, name, value, checked } = e.target;
+    const inputValue = type === "checkbox" ? checked : value;
+
+    Yup.reach(formSchema, name)
+      .validate(inputValue)
+      .then((valid) => {
+        setFormErrors({ ...formErrors, [name]: "" });
+      })
+      .catch((err) => {
+        setFormErrors({ ...formErrors, [name]: err.errors[0] });
+      });
+  };
+  useEffect(() => {
+    formSchema.isValid(formState).then((valid) => setFormValid(valid));
+  }, [formState]);
+
+  useEffect(() => {
+    console.log("[Form validation error state updated]", formErrors);
+  }, [formErrors]);
+
   return (
-    <Form onSubmit={() => {}}>
+    <Form onSubmit={handleSubmit}>
       <Label htmlFor="name">
         Name
         <Input
@@ -64,6 +80,7 @@ const LoginForm = () => {
           type="text"
           name="name"
           placeholder="Name"
+          onChange={inputChange}
           invalid={!!formErrors.name}
         />
         <FormFeedback>{formErrors.name}</FormFeedback>
@@ -76,6 +93,7 @@ const LoginForm = () => {
           type="text"
           name="surname"
           placeholder="Surname"
+          onChange={inputChange}
           invalid={!!formErrors.surname}
         />
         <FormFeedback>{formErrors.surname}</FormFeedback>
@@ -88,6 +106,7 @@ const LoginForm = () => {
           type="email"
           name="email"
           placeholder="Email adress"
+          onChange={inputChange}
           invalid={!!formErrors.email}
         />
         <FormFeedback>{formErrors.email}</FormFeedback>
@@ -100,6 +119,7 @@ const LoginForm = () => {
           type="password"
           name="password"
           placeholder="Password"
+          onChange={inputChange}
           invalid={!!formErrors.password}
         />
         <FormFeedback>{formErrors.password}</FormFeedback>
@@ -108,6 +128,7 @@ const LoginForm = () => {
       <Label htmlFor="checkbox">
         Terms
         <Input
+          onChange={inputChange}
           type="checkbox"
           id="checkbox"
           name="terms"
