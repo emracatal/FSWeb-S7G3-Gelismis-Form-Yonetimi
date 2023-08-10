@@ -94,7 +94,7 @@ const LoginForm = () => {
             onChange={inputChange}
             invalid={!!formErrors.name}
           />
-          <FormFeedback>{formErrors.name}</FormFeedback>
+          <FormFeedback data-cy="name-data">{formErrors.name}</FormFeedback>
         </Label>
         <br />
         <Label htmlFor="surname">
@@ -148,7 +148,7 @@ const LoginForm = () => {
           <FormFeedback>{formErrors.terms}</FormFeedback>
         </Label>
         <br />
-        <Button type="submit" disabled={!isFormValid}>
+        <Button type="submit" disabled={!isFormValid} data-cy="login-button">
           Login
         </Button>
       </Form>
