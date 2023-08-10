@@ -18,10 +18,6 @@ describe("Login form validations", () => {
     cy.contains("Passwords must be at least 6 characters long.");
   });
 
-  it("button disabled validation", () => {
-    cy.get("[data-cy=login-button]").should("be.disabled");
-  });
-
   it("button enabled validation", () => {
     cy.get("#name").type("Emra");
     cy.get("#surname").type("Çatal");
@@ -31,8 +27,17 @@ describe("Login form validations", () => {
     cy.get("[data-cy=login-button]").should("be.enabled");
   });
 
-  it("console.log", () => {
-    cy.get("form");
-    cy.contains("not.have.console.log");
+  it("includes 5 label,1 button", () => {
+    cy.get("label").should("have.length", 5);
+    cy.get("button").should("have.length", 1);
+  });
+
+  it("button disabled validation", () => {
+    cy.get("[data-cy=login-button]").should("be.disabled");
+  });
+
+  it("name doesn't exist error", () => {
+    cy.get("[data-cy=name-data]").type("em").type("{selectall}{backspace}");
+    cy.contains("Please enter your name");
   });
 });

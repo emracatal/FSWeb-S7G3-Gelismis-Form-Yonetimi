@@ -87,6 +87,7 @@ const LoginForm = () => {
         <Label htmlFor="name">
           Name
           <Input
+            data-cy="name-data"
             id="name"
             type="text"
             name="name"
@@ -94,7 +95,7 @@ const LoginForm = () => {
             onChange={inputChange}
             invalid={!!formErrors.name}
           />
-          <FormFeedback data-cy="name-data">{formErrors.name}</FormFeedback>
+          <FormFeedback>{formErrors.name}</FormFeedback>
         </Label>
         <br />
         <Label htmlFor="surname">
